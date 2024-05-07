@@ -6,8 +6,9 @@ type Config struct {
 }
 
 type AppConfig struct {
-	Name string `yaml:"name"`
-	Port int    `yaml:"port"`
+	Name                      string                    `yaml:"name"`
+	Port                      int                       `yaml:"port"`
+	NotificationServiceConfig NotificationServiceConfig `yaml:"notification_service_config"`
 }
 
 type DBConfig struct {
@@ -16,4 +17,8 @@ type DBConfig struct {
 	Database string `yaml:"database"`
 	User     string `yaml:"user"`
 	Password string `yaml:"password"`
+}
+type NotificationServiceConfig struct {
+	Host string `yaml:"host"`
+	Port int    `yaml:"port"`
 }

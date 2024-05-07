@@ -1,2 +1,5 @@
 name: AUTH-API
 port: 8080
+notification_service_config:
+  host: 127.0.0.1
+  port: 8090
