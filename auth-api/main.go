@@ -11,6 +11,7 @@ import (
 	"os"
 	"os/signal"
 	"strconv"
+	"syscall"
 	"time"
 )
 
@@ -34,11 +35,11 @@ func main() {
 	server.ListenAndServe()
 
 	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 
 	<-c
 
-	var wait time.Duration
+	wait := 10 * time.Second
 	ctx, cancel := context.WithTimeout(context.Background(), wait)
 	defer cancel()
 
