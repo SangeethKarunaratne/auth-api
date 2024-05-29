@@ -48,10 +48,10 @@ func (controller *UserController) Login(ctx *gin.Context) {
 
 			jsonErrors, err := json.Marshal(out)
 			if err != nil {
-				controller.log.Error1("Error marshalling JSON", zap.Error(err))
+				controller.log.Error("Error marshalling JSON", zap.Error(err))
 				return
 			}
-			controller.log.Error1("", zap.String("errors", string(jsonErrors)))
+			controller.log.Error("", zap.String("errors", string(jsonErrors)))
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"errors": out})
 			return
 		}
