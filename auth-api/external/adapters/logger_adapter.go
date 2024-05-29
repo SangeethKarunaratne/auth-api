@@ -57,7 +57,8 @@ func NewZapLogger(cfg config.LoggerConfig) *ZapLogger {
 	var level zapcore.Level
 	if err := level.UnmarshalText([]byte(cfg.Level)); err != nil {
 		fmt.Fprintf(os.Stderr, "failed to parse log level: %v", err)
-		os.Exit(1)
+		fmt.Fprintf(os.Stderr, "setting log level to error")
+		level, _ = zapcore.ParseLevel("error")
 	}
 
 	core := zapcore.NewCore(
