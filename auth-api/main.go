@@ -6,7 +6,6 @@ import (
 	"auth-api/app/http/routes"
 	"context"
 	"github.com/gin-gonic/gin"
-	"github.com/pickme-go/log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -23,10 +22,7 @@ func main() {
 	router := gin.New()
 	gin.SetMode(gin.ReleaseMode)
 
-	log.Info("Initializing routes")
 	routes.InitRoutes(router, ctr)
-
-	log.Info("Starting server on port: " + strconv.Itoa(cfg.AppConfig.Port))
 
 	server := &http.Server{
 		Addr:    ":" + strconv.Itoa(cfg.AppConfig.Port),
