@@ -13,7 +13,7 @@ type ZapLogger struct {
 	logger *zap.Logger
 }
 
-func (l ZapLogger) Info1(message interface{}, params ...interface{}) {
+func (l ZapLogger) Info(message interface{}, params ...interface{}) {
 	fields := make([]zap.Field, 0, len(params))
 	for _, item := range params {
 		fields = append(fields, convertToZapField(item))
@@ -22,7 +22,7 @@ func (l ZapLogger) Info1(message interface{}, params ...interface{}) {
 	l.logger.Info(fmt.Sprint(message), fields...)
 }
 
-func (l ZapLogger) Error1(message interface{}, params ...interface{}) {
+func (l ZapLogger) Error(message interface{}, params ...interface{}) {
 	fields := make([]zap.Field, 0, len(params))
 	for _, item := range params {
 		fields = append(fields, convertToZapField(item))
@@ -31,7 +31,7 @@ func (l ZapLogger) Error1(message interface{}, params ...interface{}) {
 	l.logger.Error(fmt.Sprint(message), fields...)
 }
 
-func (l ZapLogger) Debug1(message interface{}, params ...interface{}) {
+func (l ZapLogger) Debug(message interface{}, params ...interface{}) {
 	fields := make([]zap.Field, 0, len(params))
 	for _, item := range params {
 		fields = append(fields, convertToZapField(item))
@@ -40,7 +40,7 @@ func (l ZapLogger) Debug1(message interface{}, params ...interface{}) {
 	l.logger.Debug(fmt.Sprint(message), fields...)
 }
 
-func (l ZapLogger) Warn1(message interface{}, params ...interface{}) {
+func (l ZapLogger) Warn(message interface{}, params ...interface{}) {
 	fields := make([]zap.Field, 0, len(params))
 	for _, item := range params {
 		fields = append(fields, convertToZapField(item))
