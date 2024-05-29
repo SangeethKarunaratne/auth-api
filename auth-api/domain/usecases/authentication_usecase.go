@@ -4,7 +4,7 @@ import (
 	"auth-api/app/container"
 	"context"
 	"fmt"
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt/v5"
 	"os"
 	"time"
 )
@@ -19,7 +19,7 @@ type AuthUseCase struct {
 type authCustomClaims struct {
 	Name string `json:"name"`
 	User bool   `json:"user"`
-	jwt.StandardClaims
+	jwt.RegisteredClaims
 }
 
 func NewAuthUseCase(container *container.Container) *AuthUseCase {
@@ -33,9 +33,9 @@ func (service *AuthUseCase) GenerateToken(ctx context.Context, email string, isU
 	claims := &authCustomClaims{
 		email,
 		isUser,
-		jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),
-			IssuedAt:  time.Now().Unix(),
+		jwt.RegisteredClaims{
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 24)),
 			Issuer:    service.issuer,
 		},
 	}
