@@ -1,15 +1,15 @@
 package config
 
 type Config struct {
-	AppConfig    AppConfig
-	DBConfig     DBConfig
-	LoggerConfig LoggerConfig
+	AppConfig AppConfig
+	DBConfig  DBConfig
 }
 
 type AppConfig struct {
 	Name                      string                    `yaml:"name"`
 	Port                      int                       `yaml:"port"`
 	NotificationServiceConfig NotificationServiceConfig `yaml:"notification_service_config"`
+	LoggerConfig              LoggerConfig              `yaml:"logger_config"`
 }
 
 type DBConfig struct {

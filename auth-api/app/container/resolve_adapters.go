@@ -11,7 +11,7 @@ var resolvedAdapters Adapters
 func resolveAdapters(cfg *config.Config) Adapters {
 
 	resolveDBAdapter(cfg.DBConfig)
-	resolveLogAdapter(cfg.LoggerConfig)
+	resolveLogAdapter(cfg.AppConfig.LoggerConfig)
 	return resolvedAdapters
 }
 
