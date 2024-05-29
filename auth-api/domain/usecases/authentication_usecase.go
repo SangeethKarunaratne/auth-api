@@ -5,7 +5,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
-	"github.com/pickme-go/log"
 	"os"
 	"time"
 )
@@ -45,7 +44,6 @@ func (service *AuthUseCase) GenerateToken(ctx context.Context, email string, isU
 
 	t, err := token.SignedString([]byte(service.secretKey))
 	if err != nil {
-		log.InfoContext(ctx, authenticationUseCaseLogPrefix, "user not registered")
 		panic(err)
 	}
 

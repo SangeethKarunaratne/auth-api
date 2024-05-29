@@ -2,7 +2,7 @@ package error
 
 import "github.com/go-playground/validator/v10"
 
-type ErrorMsg struct {
+type ValidationErrorMsg struct {
 	Field   string `json:"field"`
 	Message string `json:"message"`
 }

@@ -1,8 +1,9 @@
 package config
 
 type Config struct {
-	AppConfig AppConfig
-	DBConfig  DBConfig
+	AppConfig    AppConfig
+	DBConfig     DBConfig
+	LoggerConfig LoggerConfig
 }
 
 type AppConfig struct {
@@ -21,4 +22,8 @@ type DBConfig struct {
 type NotificationServiceConfig struct {
 	Host string `yaml:"host"`
 	Port int    `yaml:"port"`
+}
+
+type LoggerConfig struct {
+	Level string `yaml:"level"`
 }

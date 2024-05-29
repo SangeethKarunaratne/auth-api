@@ -11,6 +11,7 @@ var resolvedAdapters Adapters
 func resolveAdapters(cfg *config.Config) Adapters {
 
 	resolveDBAdapter(cfg.DBConfig)
+	resolveLogAdapter(cfg.LoggerConfig)
 	return resolvedAdapters
 }
 
@@ -22,4 +23,9 @@ func resolveDBAdapter(cfg config.DBConfig) {
 	}
 
 	resolvedAdapters.DBAdapter = db
+}
+
+func resolveLogAdapter(cfg config.LoggerConfig) {
+	logger := adapters.NewZapLogger(cfg)
+	resolvedAdapters.LogAdapter = logger
 }

@@ -5,7 +5,6 @@ import (
 	responses "auth-api/app/http/response"
 	"auth-api/domain/usecases"
 	"github.com/gin-gonic/gin"
-	"github.com/pickme-go/log"
 	"net/http"
 	"strings"
 )
@@ -23,7 +22,6 @@ func AuthMiddleware(ctr *container.Container) gin.HandlerFunc {
 			resp := responses.ErrorResponse{
 				Message: "User Unauthorized",
 			}
-			log.InfoContext(c, logPrefix, err)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, resp)
 			return
 		} else {
@@ -32,7 +30,6 @@ func AuthMiddleware(ctr *container.Container) gin.HandlerFunc {
 				resp := responses.ErrorResponse{
 					Message: "User Unauthorized",
 				}
-				log.InfoContext(c, logPrefix, err)
 				c.AbortWithStatusJSON(http.StatusUnauthorized, resp)
 			}
 			return

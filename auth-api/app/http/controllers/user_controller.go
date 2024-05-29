@@ -6,14 +6,14 @@ import (
 	error2 "auth-api/app/http/error"
 	"auth-api/app/http/request"
 	"auth-api/app/http/response"
-	_ "auth-api/app/http/response"
+	"auth-api/domain/adapters"
 	"auth-api/domain/entities"
 	"auth-api/domain/usecases"
+	"encoding/json"
 	"errors"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
-	"github.com/pickme-go/log"
+	"go.uber.org/zap"
 	"net/http"
 )
 
@@ -23,6 +23,7 @@ type UserController struct {
 	container   *container.Container
 	userUseCase *usecases.UserUseCase
 	authUseCase *usecases.AuthUseCase
+	log         adapters.LoggerInterface
 }
 
 func NewUserController(container *container.Container) *UserController {
@@ -30,6 +31,7 @@ func NewUserController(container *container.Container) *UserController {
 		container:   container,
 		userUseCase: usecases.NewUserUseCase(container),
 		authUseCase: usecases.NewAuthUseCase(container),
+		log:         container.Adapters.LogAdapter,
 	}
 }
 
@@ -39,11 +41,17 @@ func (controller *UserController) Login(ctx *gin.Context) {
 	if err := ctx.ShouldBindJSON(&loginRequest); err != nil {
 		var ve validator.ValidationErrors
 		if errors.As(err, &ve) {
-			out := make([]error2.ErrorMsg, len(ve))
+			out := make([]error2.ValidationErrorMsg, len(ve))
 			for i, fe := range ve {
-				out[i] = error2.ErrorMsg{Field: fe.Field(), Message: error2.GetErrorMsg(fe)}
+				out[i] = error2.ValidationErrorMsg{Field: fe.Field(), Message: error2.GetErrorMsg(fe)}
 			}
-			log.InfoContext(ctx, logPrefix, out)
+
+			jsonErrors, err := json.Marshal(out)
+			if err != nil {
+				controller.log.Error1("Error marshalling JSON", zap.Error(err))
+				return
+			}
+			controller.log.Error1("", zap.String("errors", string(jsonErrors)))
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"errors": out})
 			return
 		}
@@ -52,7 +60,6 @@ func (controller *UserController) Login(ctx *gin.Context) {
 	isUserAuthenticated, err := controller.userUseCase.LoginUser(ctx, loginRequest.Email, loginRequest.Password)
 
 	if err != nil {
-		log.ErrorContext(ctx, logPrefix, err)
 		ctx.AbortWithStatusJSON(http.StatusUnauthorized, response.ErrorResponse{
 			Message: err.Error(),
 		})
@@ -63,10 +70,8 @@ func (controller *UserController) Login(ctx *gin.Context) {
 		ctx.IndentedJSON(http.StatusAccepted, response.TokenResponse{
 			Token: token,
 		})
-		log.InfoContext(ctx, logPrefix, fmt.Sprintf("Token generate for user: %v, token: %v", loginRequest.Email, token))
 		return
 	} else {
-		log.InfoContext(ctx, logPrefix, "incorrect email or password")
 		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": "incorrect email or password"})
 		return
 	}
@@ -79,11 +84,10 @@ func (controller *UserController) Register(ctx *gin.Context) {
 	if err := ctx.ShouldBindJSON(&RegisterRequest); err != nil {
 		var ve validator.ValidationErrors
 		if errors.As(err, &ve) {
-			out := make([]error2.ErrorMsg, len(ve))
+			out := make([]error2.ValidationErrorMsg, len(ve))
 			for i, fe := range ve {
-				out[i] = error2.ErrorMsg{Field: fe.Field(), Message: error2.GetErrorMsg(fe)}
+				out[i] = error2.ValidationErrorMsg{Field: fe.Field(), Message: error2.GetErrorMsg(fe)}
 			}
-			log.InfoContext(ctx, out)
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"errors": out})
 			return
 		}
