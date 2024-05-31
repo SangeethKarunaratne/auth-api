@@ -9,8 +9,6 @@ import (
 	"strings"
 )
 
-const logPrefix = "AuthMiddleware"
-
 func AuthMiddleware(ctr *container.Container) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenString := extractToken(c.GetHeader("Authorization"))

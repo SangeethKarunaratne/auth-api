@@ -9,8 +9,6 @@ import (
 	"time"
 )
 
-const authenticationUseCaseLogPrefix = "AuthenticationUseCase"
-
 type AuthUseCase struct {
 	secretKey string
 	issuer    string

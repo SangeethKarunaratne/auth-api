@@ -10,8 +10,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-const userUseCaseLogPrefix = "UserUseCase"
-
 type UserUseCase struct {
 	userRepository repositories.UserRepositoryInterface
 }

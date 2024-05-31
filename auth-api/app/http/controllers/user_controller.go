@@ -16,8 +16,6 @@ import (
 	"net/http"
 )
 
-const logPrefix = "UserController"
-
 type UserController struct {
 	container   *container.Container
 	userUseCase *usecases.UserUseCase
