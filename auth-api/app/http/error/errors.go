@@ -1,6 +1,13 @@
 package error
 
-import "github.com/go-playground/validator/v10"
+import (
+	"auth-api/app/http/response"
+	"errors"
+	"fmt"
+	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
+	"net/http"
+)
 
 type ValidationErrorMsg struct {
 	Field   string `json:"field"`
@@ -17,4 +24,20 @@ func GetErrorMsg(fe validator.FieldError) string {
 		return "Should be greater than " + fe.Param()
 	}
 	return "Unknown error"
+}
+
+var ErrInvalidCredentials = errors.New("invalid credentials")
+
+func HandleClientError(ctx *gin.Context, statusCode int, err any) {
+	ctx.AbortWithStatusJSON(statusCode, err)
+}
+
+func HandleServerError(ctx *gin.Context, err error) {
+	// Log the internal server error for internal purposes
+	fmt.Printf("Internal server error: %v\n", err)
+
+	// Mask the internal error with a generic message
+	ctx.AbortWithStatusJSON(http.StatusInternalServerError, response.ErrorResponse{
+		Message: "Internal server error",
+	})
 }

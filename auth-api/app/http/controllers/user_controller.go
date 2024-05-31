@@ -9,7 +9,6 @@ import (
 	"auth-api/domain/adapters"
 	"auth-api/domain/entities"
 	"auth-api/domain/usecases"
-	"encoding/json"
 	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -46,12 +45,10 @@ func (controller *UserController) Login(ctx *gin.Context) {
 				out[i] = error2.ValidationErrorMsg{Field: fe.Field(), Message: error2.GetErrorMsg(fe)}
 			}
 
-			jsonErrors, err := json.Marshal(out)
-			if err != nil {
-				controller.log.Error("Error marshalling JSON", zap.Error(err))
-				return
-			}
-			controller.log.Error("", zap.String("errors", string(jsonErrors)))
+			log, _ := ctx.Get("logger")
+			l, _ := log.(*zap.Logger)
+
+			l.Info("Logging from Gin context1", zap.Any("key", out))
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"errors": out})
 			return
 		}
@@ -60,19 +57,25 @@ func (controller *UserController) Login(ctx *gin.Context) {
 	isUserAuthenticated, err := controller.userUseCase.LoginUser(ctx, loginRequest.Email, loginRequest.Password)
 
 	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnauthorized, response.ErrorResponse{
-			Message: err.Error(),
-		})
-		return
+		if errors.Is(err, error2.ErrInvalidCredentials) {
+			ctx.AbortWithStatusJSON(http.StatusUnauthorized, response.ErrorResponse{
+				Message: err.Error(),
+			})
+			return
+		} else {
+			error2.HandleServerError(ctx, err)
+			return
+		}
 	}
 	if isUserAuthenticated {
-		token := controller.authUseCase.GenerateToken(ctx, loginRequest.Email, true)
+		token, err := controller.authUseCase.GenerateToken(ctx, loginRequest.Email, true)
+		if err != nil {
+			error2.HandleServerError(ctx, err)
+			return
+		}
 		ctx.IndentedJSON(http.StatusAccepted, response.TokenResponse{
 			Token: token,
 		})
-		return
-	} else {
-		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": "incorrect email or password"})
 		return
 	}
 
@@ -129,6 +132,16 @@ func (controller *UserController) GetUsers(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
+
+	ctx.JSON(http.StatusOK, userResponse)
+
+}
+
+func (controller *UserController) GetUsers1(ctx *gin.Context) {
+
+	var userResponse response.User
+	userResponse.ID = 1
+	userResponse.Name = "sddsds"
 
 	ctx.JSON(http.StatusOK, userResponse)
 

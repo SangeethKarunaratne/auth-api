@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"auth-api/app/container"
+	error2 "auth-api/app/http/error"
 	"auth-api/domain/entities"
 	"auth-api/domain/repositories"
 	"context"
@@ -75,12 +76,13 @@ func (s *UserUseCase) LoginUser(ctx context.Context, email string, password stri
 	}
 
 	if !isUserExists {
-		return false, errors.New("user not registered")
+		return false, error2.ErrInvalidCredentials
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 	if err != nil {
-		return false, errors.New("invalid password")
+		// todo: add log here
+		return false, error2.ErrInvalidCredentials
 	}
 
 	return true, nil

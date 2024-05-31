@@ -26,6 +26,6 @@ func resolveDBAdapter(cfg config.DBConfig) {
 }
 
 func resolveLogAdapter(cfg config.LoggerConfig) {
-	logger := adapters.NewZapLogger(cfg)
-	resolvedAdapters.LogAdapter = logger
+	//logger := adapters.NewZapLogger(cfg)
+	//resolvedAdapters.LogAdapter = logger
 }

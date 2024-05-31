@@ -29,7 +29,7 @@ func NewAuthUseCase(container *container.Container) *AuthUseCase {
 	}
 }
 
-func (service *AuthUseCase) GenerateToken(ctx context.Context, email string, isUser bool) string {
+func (service *AuthUseCase) GenerateToken(ctx context.Context, email string, isUser bool) (string, error) {
 	claims := &authCustomClaims{
 		email,
 		isUser,
@@ -44,10 +44,10 @@ func (service *AuthUseCase) GenerateToken(ctx context.Context, email string, isU
 
 	t, err := token.SignedString([]byte(service.secretKey))
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 
-	return t
+	return t, err
 }
 
 func (service *AuthUseCase) ValidateToken(ctx context.Context, encodedToken string) (*jwt.Token, error) {
