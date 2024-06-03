@@ -8,6 +8,7 @@ import (
 	"auth-api/app/http/response"
 	"auth-api/domain/entities"
 	"auth-api/external/adapters"
+	"auth-api/external/repositories"
 	"auth-api/mocks"
 	"bytes"
 	"encoding/json"
@@ -121,6 +122,7 @@ func TestGetUsers(t *testing.T) {
 
 	mockUserRepo := mocks.NewMockUserRepositoryInterface(mockCtrl)
 	mockLogger := mocks.NewMockLoggerInterface(mockCtrl)
+	mockDB := mocks.NewMockDBAdapterInterface(mockCtrl)
 
 	container := &container.Container{
 		Repositories: container.Repositories{
@@ -132,6 +134,7 @@ func TestGetUsers(t *testing.T) {
 	}
 
 	userController := controllers.NewUserController(container)
+	userRep := repositories.NewUserRepository(mockDB)
 
 	t.Run("success", func(t *testing.T) {
 		users := []entities.User{
@@ -139,10 +142,21 @@ func TestGetUsers(t *testing.T) {
 			{ID: 2, Name: "Jane Doe", Email: "jane@example.com"},
 		}
 
+		var queryResponse []map[string]interface{}
+		newMap := map[string]interface{}{
+			"name":  "John Doe",
+			"age":   30,
+			"email": "john.doe@example.com",
+		}
+		queryResponse = append(queryResponse, newMap)
+
 		rr := httptest.NewRecorder()
 		ctx, _ := gin.CreateTestContext(rr)
 
+		mockDB.EXPECT().Query(ctx, `SELECT id, name, email FROM users`,
+			map[string]interface{}{}).Return(queryResponse, nil)
 		mockUserRepo.EXPECT().Get(gomock.Any()).Return(users, nil)
+		userRep.Get(ctx)
 
 		userController.GetUsers(ctx)
 
