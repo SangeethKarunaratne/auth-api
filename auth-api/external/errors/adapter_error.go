@@ -10,7 +10,6 @@ type AdapterError struct {
 }
 
 func NewAdapterError(message string, code int, details string) error {
-
 	return &AdapterError{
 		errType: "AdapterError",
 		code:    code,
