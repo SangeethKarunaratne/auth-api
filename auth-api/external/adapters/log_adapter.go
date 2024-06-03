@@ -49,16 +49,7 @@ func (l ZapLogger) Warn(message interface{}, params ...interface{}) {
 }
 
 func NewZapLogger(cfg config.LoggerConfig) *zap.Logger {
-
-	//encoderConfig := zap.NewProductionEncoderConfig()
-	//encoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
-
 	var level zapcore.Level
-	//if err := level.UnmarshalText([]byte(cfg.Level)); err != nil {
-	//	fmt.Fprintf(os.Stderr, "failed to parse log level: %v", err)
-	//	fmt.Fprintf(os.Stderr, "setting log level to error")
-	//	level, _ = zapcore.ParseLevel("error")
-	//}
 
 	encoderConfig := zapcore.EncoderConfig{
 		TimeKey:        "ts",
@@ -74,10 +65,9 @@ func NewZapLogger(cfg config.LoggerConfig) *zap.Logger {
 		EncodeCaller:   zapcore.ShortCallerEncoder,
 	}
 
-	// Create a console encoder
 	consoleEncoder := zapcore.NewConsoleEncoder(encoderConfig)
 
-	level.UnmarshalText([]byte("info"))
+	level.UnmarshalText([]byte(cfg.Level))
 	core := zapcore.NewCore(
 		consoleEncoder,
 		zapcore.Lock(os.Stdout),
