@@ -13,8 +13,7 @@ type Container struct {
 }
 
 type Adapters struct {
-	DBAdapter  adapters.DBAdapterInterface
-	LogAdapter adapters.LoggerInterface
+	DBAdapter adapters.DBAdapterInterface
 }
 
 type Repositories struct {

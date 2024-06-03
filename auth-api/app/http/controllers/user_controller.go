@@ -6,7 +6,6 @@ import (
 	error2 "auth-api/app/http/error"
 	"auth-api/app/http/request"
 	"auth-api/app/http/response"
-	"auth-api/domain/adapters"
 	"auth-api/domain/entities"
 	"auth-api/domain/usecases"
 	"errors"
@@ -20,7 +19,6 @@ type UserController struct {
 	container   *container.Container
 	userUseCase *usecases.UserUseCase
 	authUseCase *usecases.AuthUseCase
-	log         adapters.LoggerInterface
 }
 
 func NewUserController(container *container.Container) *UserController {
@@ -28,7 +26,6 @@ func NewUserController(container *container.Container) *UserController {
 		container:   container,
 		userUseCase: usecases.NewUserUseCase(container),
 		authUseCase: usecases.NewAuthUseCase(container),
-		log:         container.Adapters.LogAdapter,
 	}
 }
 
