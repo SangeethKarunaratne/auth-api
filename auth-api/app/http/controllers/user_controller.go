@@ -134,13 +134,3 @@ func (controller *UserController) GetUsers(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, userResponse)
 
 }
-
-func (controller *UserController) GetUsers1(ctx *gin.Context) {
-
-	var userResponse response.User
-	userResponse.ID = 1
-	userResponse.Name = "sddsds"
-
-	ctx.JSON(http.StatusOK, userResponse)
-
-}
